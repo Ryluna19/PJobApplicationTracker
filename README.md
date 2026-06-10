@@ -1,307 +1,167 @@
 # 📋 Job Application Tracker
 
-> A full-stack CRUD application for tracking job applications. Built as a **portfolio project** to demonstrate full-stack development skills.
+> 🚀 A full-stack web application for tracking job applications through the entire hiring pipeline — from application to interview, offer, or rejection.
 
-[![React](https://img.shields.io/badge/React-18+-blue?logo=react)](https://react.dev)
-[![Node.js](https://img.shields.io/badge/Node.js-Express-green?logo=node.js)](https://nodejs.org)
-[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-13+-336791?logo=postgresql)](https://www.postgresql.org)
-[![License](https://img.shields.io/badge/License-MIT-yellow)](LICENSE)
+Built as a **portfolio project** to demonstrate practical full-stack development skills with React, Node.js, PostgreSQL, and JWT authentication.
 
-## 📖 Table of Contents
+---
 
-- [Overview](#overview)
-- [Features](#features)
-- [Tech Stack](#tech-stack)
-- [Application Status Flow](#application-status-flow)
-- [Project Structure](#project-structure)
-- [Prerequisites](#prerequisites)
-- [Installation & Setup](#installation--setup)
-- [Running the Application](#running-the-application)
-- [Database Schema](#database-schema)
-- [API Endpoints](#api-endpoints)
-- [Screenshots](#screenshots)
-- [Learning Outcomes](#learning-outcomes)
-- [Author](#author)
+## 🎬 Demo
 
-## 🎯 Overview
+<img width="1146" height="959" alt="Animação" src="https://github.com/user-attachments/assets/49d24103-cbca-46ec-ad00-bc068e6ae3dc" />
 
-This is a **simple CRUD portfolio project** designed to showcase:
-- Full-stack web development with React and Node.js
-- User authentication and authorization
-- Database design and integration
-- RESTful API development
-- Frontend-backend communication
 
-The application allows users to create an account, log in securely, and manage their job applications throughout the hiring process.
+> 📌 Recommended: 10–20 seconds showing full flow (login → dashboard → create job → update status)
+
+---
+
+## ⚡ 10-Second Overview
+
+- Full-stack app (React + Node.js + PostgreSQL)
+- JWT authentication system
+- Job application tracking system
+- Full CRUD operations
+- User-specific dashboard
+- Search & filtering system
+
+---
 
 ## ✨ Features
 
-- **Authentication**
-  - User registration and login
-  - JWT-based authentication
-  - Password hashing with bcrypt
-  - Persistent login sessions
+### 🔐 Authentication
+- User registration and login
+- JWT-based authentication
+- Password hashing with bcrypt
+- Protected routes
 
-- **CRUD Operations**
-  - Create job applications
-  - Read/view all applications
-  - Update application details
-  - Delete applications
+### 📊 Job Tracking
+- Create, read, update, delete applications
+- Track status:
+  `Applied → Interview → Offer → Rejected`
+- Search by company
+- Filter by status
+- Personal dashboard per user
 
-- **Application Management**
-  - Track application status (Applied → Interview → Offer → Rejected)
-  - Search jobs by company name
-  - Filter jobs by status
-  - View dashboard with application statistics
+### 🧠 UX
+- Simple and clean interface
+- Fast interactions
+- Organized dashboard for quick access
 
-- **Security**
-  - Protected routes using authentication middleware
-  - Secure password storage
-  - JWT token validation
+---
 
 ## 🛠 Tech Stack
 
 ### Frontend
-- **React** 18+ - UI library
-- **Vite** - Build tool and dev server
-- **CSS** - Styling
+- React 18
+- Vite
+- JavaScript (ES6+)
+- CSS
 
 ### Backend
-- **Node.js** - Runtime environment
-- **Express.js** - Web framework
-- **JWT (JSON Web Tokens)** - Authentication
-- **bcrypt** - Password hashing
+- Node.js
+- Express.js
+- JWT Authentication
+- bcrypt
 
 ### Database
-- **PostgreSQL** - Relational database
+- PostgreSQL (relational schema)
 
-## 📊 Application Status Flow
+---
 
-Each job application progresses through these stages:
+## 🧩 Architecture
+- RESTful API design
+- Clean separation (routes / controllers / middleware)
+- Authentication middleware (JWT)
 
-```
-Applied → Interview → Offer → Rejected
-```
+---
 
-Users can update the status of each application at any time.
+## 📸 Screenshots
 
-## 📁 Project Structure
+### Login
+<img width="1126" height="592" alt="image" src="https://github.com/user-attachments/assets/f254413c-2aec-4055-88a9-bf57eb20a8cb" />
 
-```
-job-application-tracker/
-│
-├── frontend/                 # React application
-│   ├── src/
-│   │   ├── components/      # Reusable React components
-│   │   ├── services/        # API service calls
-│   │   ├── App.jsx          # Main App component
-│   │   └── App.css          # Global styles
-│   │
-│   └── package.json
-│
-├── backend/                  # Node.js/Express server
-│   ├── controllers/         # Request handlers
-│   ├── database/            # Database configuration
-│   ├── middleware/          # Custom middleware (auth, etc.)
-│   ├── models/              # Database models/queries
-│   ├── routes/              # API route definitions
-│   ├── server.js            # Server entry point
-│   │
-│   └── package.json
-│
-└── README.md
-```
+### Dashboard
+<img width="962" height="740" alt="image2" src="https://github.com/user-attachments/assets/d042f5d4-6dbc-4840-bb3c-02588c6ac39e" />
 
-## 📋 Prerequisites
+### Job List
+<img width="1006" height="710" alt="image3" src="https://github.com/user-attachments/assets/f8a8e7a1-1e47-4480-b5d3-75685f94c89c" />
 
-Before running this project, ensure you have:
+---
 
-- **Node.js** v16 or higher ([download](https://nodejs.org/))
-- **npm** or **yarn** package manager
-- **PostgreSQL** 12 or higher ([download](https://www.postgresql.org/download/))
-- **Git** for cloning the repository
+## 🎯 What This Project Demonstrates
 
-## 🚀 Installation & Setup
+This project simulates a real-world full-stack application and demonstrates:
 
-### 1. Clone the Repository
+- Full-stack development (React + Node.js)
+- REST API design and integration
+- Authentication & authorization (JWT)
+- Relational database modeling (PostgreSQL)
+- CRUD lifecycle in real application context
+- Clean project structure and organization
+
+---
+
+## 🚧 Future Improvements
+
+- Mobile responsive UI
+- Data visualization dashboard (charts)
+- Email notifications for status updates
+- Production deployment
+- User profile system
+- Notes/comments per job
+- Testing (unit & integration)
+
+---
+
+## 🧰 Setup
+
+### Prerequisites
+- Node.js 16+
+- PostgreSQL
+- npm
+
+---
+
+### 1. Clone repo
 
 ```bash
 git clone https://github.com/Ryluna19/PJobApplicationTracker.git
 cd PJobApplicationTracker
-```
 
-### 2. Database Setup
-
-Create a PostgreSQL database:
-
-```bash
-createdb jobtracker
-```
-
-Create the tables by running these SQL commands (connect to your database first):
-
-```sql
--- Users table
-CREATE TABLE users (
-  id SERIAL PRIMARY KEY,
-  name VARCHAR(100) NOT NULL,
-  email VARCHAR(100) UNIQUE NOT NULL,
-  password TEXT NOT NULL
-);
-
--- Jobs table
-CREATE TABLE jobs (
-  id SERIAL PRIMARY KEY,
-  company VARCHAR(100) NOT NULL,
-  role VARCHAR(100) NOT NULL,
-  status VARCHAR(50) NOT NULL,
-  application_date DATE NOT NULL,
-  user_id INTEGER NOT NULL,
-  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
-);
-```
-
-### 3. Backend Setup
-
-```bash
+Backend
 cd backend
 npm install
-```
 
-Create a `.env` file in the `backend` folder:
+Create .env:
 
-```env
-# Database Configuration
-DB_USER=your_postgres_user
+DB_USER=your_user
+DB_PASSWORD=your_password
 DB_HOST=localhost
 DB_NAME=jobtracker
-DB_PASSWORD=your_postgres_password
 DB_PORT=5432
 
-# JWT Configuration
-JWT_SECRET=your_secret_key_here
-
-# Server Port
+JWT_SECRET=your_secret
 PORT=5000
-```
 
-Start the backend server:
+Run:
 
-```bash
 npm run dev
-```
 
-The backend will run on `http://localhost:5000`
-
-### 4. Frontend Setup
-
-```bash
+3. Frontend
 cd frontend
 npm install
-```
-
-Start the development server:
-
-```bash
 npm run dev
+
 ```
+👨‍💻 Author
 
-The frontend will run on `http://localhost:5173` (or another available port)
+Ryan Santos
 
-## 🎮 Running the Application
+GitHub: Ryluna19
+Full-Stack Developer (React, Node.js, PostgreSQL)
+Seeking internship / junior developer opportunities
+📌 Note
 
-**Option 1: Run both servers separately**
+This is a portfolio project built for learning purposes. Production-ready improvements would include validation, testing, rate limiting, and CI/CD.
 
-Terminal 1 (Backend):
-```bash
-cd backend && npm run dev
-```
 
-Terminal 2 (Frontend):
-```bash
-cd frontend && npm run dev
-```
-
-## 🗄 Database Schema
-
-### Users Table
-
-| Field | Type | Constraints |
-|-------|------|-------------|
-| id | SERIAL | PRIMARY KEY |
-| name | VARCHAR(100) | NOT NULL |
-| email | VARCHAR(100) | UNIQUE, NOT NULL |
-| password | TEXT | NOT NULL |
-
-### Jobs Table
-
-| Field | Type | Constraints |
-|-------|------|-------------|
-| id | SERIAL | PRIMARY KEY |
-| company | VARCHAR(100) | NOT NULL |
-| role | VARCHAR(100) | NOT NULL |
-| status | VARCHAR(50) | NOT NULL |
-| application_date | DATE | NOT NULL |
-| user_id | INTEGER | FOREIGN KEY → users(id) |
-
-## 🔌 API Endpoints
-
-### Authentication
-- `POST /api/auth/register` - Register a new user
-- `POST /api/auth/login` - User login
-
-### Jobs (Protected Routes)
-- `GET /api/jobs` - Get all user's job applications
-- `POST /api/jobs` - Create a new job application
-- `PUT /api/jobs/:id` - Update a job application
-- `DELETE /api/jobs/:id` - Delete a job application
-- `GET /api/jobs/search?company=name` - Search by company
-
-## 📸 Screenshots
-
-### Login Page
-<img width="1126" height="592" alt="Login Screenshot" src="https://github.com/user-attachments/assets/a8ff5a2d-bf89-4e82-9b16-a57d8ad14e69" />
-
-### Dashboard
-<img width="962" height="740" alt="Dashboard Screenshot" src="https://github.com/user-attachments/assets/a18c7ae4-3695-4508-acc4-c5b972a3c38c" />
-
-### Job List
-<img width="1006" height="710" alt="Job List Screenshot" src="https://github.com/user-attachments/assets/72a86f9d-952c-41bb-88f4-7142753f8bc5" />
-
-## 🎓 Learning Outcomes
-
-This project demonstrates:
-
-✅ **Frontend Development** - React components, state management, form handling  
-✅ **Backend Development** - Express.js API, middleware, authentication  
-✅ **Database Design** - PostgreSQL schema, relationships, queries  
-✅ **Security** - JWT tokens, password hashing, protected routes  
-✅ **Full-Stack Integration** - Client-server communication, REST APIs  
-✅ **Development Workflow** - Git version control, environment configuration
-
-## 🚧 Future Enhancements
-
-- Responsive mobile layout
-- Better dashboard visualizations with charts
-- Email notifications for application updates
-- Deployment to production (Heroku/AWS)
-- User profile page
-- Application notes/comments
-- Interview date scheduling
-- Export applications to CSV
-
-## 📄 License
-
-This project is open source and available under the [MIT License](LICENSE).
-
-## 👨‍💻 Author
-
-**Ryan Santos**
-
-- 🎓 Computer Systems Analysis Student
-- 💼 Full Stack Development | Node.js | React | PostgreSQL
-- 📧 [GitHub](https://github.com/Ryluna19)
-
----
-
-**Note:** This is a portfolio/learning project. For production use, additional features like rate limiting, input validation, error handling improvements, and comprehensive testing would be recommended.
