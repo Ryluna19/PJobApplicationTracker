@@ -74,13 +74,13 @@ Built as a **portfolio project** to demonstrate practical full-stack development
 ## 📸 Screenshots
 
 ### Login
-<img width="1126" height="592" alt="image" src="https://github.com/user-attachments/assets/f254413c-2aec-4055-88a9-bf57eb20a8cb" />
+<img width="768" height="563" alt="image" src="https://github.com/user-attachments/assets/e4bc7a3f-3189-4da3-938b-e263dbe71f7c" />
 
 ### Dashboard
-<img width="962" height="740" alt="image2" src="https://github.com/user-attachments/assets/d042f5d4-6dbc-4840-bb3c-02588c6ac39e" />
+<img width="922" height="655" alt="image2" src="https://github.com/user-attachments/assets/b783c1c3-bb42-4420-80a3-7160e87ed25a" />
 
 ### Job List
-<img width="1006" height="710" alt="image3" src="https://github.com/user-attachments/assets/f8a8e7a1-1e47-4480-b5d3-75685f94c89c" />
+<img width="949" height="786" alt="image3" src="https://github.com/user-attachments/assets/3e17f864-4d29-49f9-9d65-8abb3a39ca7e" />
 
 ---
 
