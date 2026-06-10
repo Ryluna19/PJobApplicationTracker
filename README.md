@@ -8,7 +8,7 @@ Built as a **portfolio project** to demonstrate practical full-stack development
 
 ## 🎬 Demo
 
-<img width="1146" height="959" alt="Animação" src="https://github.com/user-attachments/assets/49d24103-cbca-46ec-ad00-bc068e6ae3dc" />
+<img width="1119" height="885" alt="Animação" src="https://github.com/user-attachments/assets/dc175cc4-6375-43c1-bc88-d4d9607aab84" />
 
 
 ## ⚡ 10-Second Overview
