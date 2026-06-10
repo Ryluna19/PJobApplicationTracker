@@ -1,6 +1,6 @@
 # 📋 Job Application Tracker
 
-> 🚀 A full-stack web application for tracking job applications through the entire hiring pipeline — from application to interview, offer, or rejection.
+🚀 A full-stack web application for tracking job applications through the entire hiring pipeline — from application to interview, offer, or rejection.
 
 Built as a **portfolio project** to demonstrate practical full-stack development skills with React, Node.js, PostgreSQL, and JWT authentication.
 
@@ -11,7 +11,7 @@ Built as a **portfolio project** to demonstrate practical full-stack development
 <img width="1146" height="959" alt="Animação" src="https://github.com/user-attachments/assets/49d24103-cbca-46ec-ad00-bc068e6ae3dc" />
 
 
-> 📌 Recommended: 10–20 seconds showing full flow (login → dashboard → create job → update status)
+📌 Recommended: 10–20 seconds showing full flow (login → dashboard → create job → update status)
 
 ---
 
