@@ -1,49 +1,107 @@
-// Lista de jobs
+// Opções de status
+const STATUS_OPTIONS = [
+    "Applied",
+    "Interview",
+    "Offer",
+    "Rejected"
+];
+
+// Formata data
+function formatDate(dateValue) {
+    if (!dateValue) {
+        return "Sem data";
+    }
+
+    return new Date(dateValue).toLocaleDateString("pt-BR", {
+        timeZone: "UTC"
+    });
+}
+
+// Lista de candidaturas
 function JobList({ jobs, onDelete, onUpdate }) {
+    if (jobs.length === 0) {
+        return (
+            <div className="empty-state">
+                <h2>Nenhuma candidatura encontrada</h2>
+                <p>
+                    Tente alterar os filtros ou adicione uma nova candidatura.
+                </p>
+            </div>
+        );
+    }
+
     return (
-        <div>
-            <h2>Minhas Candidaturas</h2>
+        <section className="job-section">
+            <div className="section-header">
+                <h2>Minhas Candidaturas</h2>
+                <p>
+                    Atualize o status e acompanhe seu processo seletivo.
+                </p>
+            </div>
 
-            {jobs.map((job) => (
-                <div className="job-card" key={job.id}>
-                    <h3>{job.company}</h3>
+            <div className="job-list">
+                {jobs.map((job) => {
+                    const statusClass = `status-${job.status.toLowerCase()}`;
 
-                    <p>Cargo: {job.role}</p>
-                    <p>
-                        Data: {
-                            job.application_date
-                                ? new Date(job.application_date)
-                                    .toLocaleDateString("pt-BR")
-                                : ""
-                        }
-                    </p>
-                    <p className={`status ${job.status.toLowerCase()}`}>
-                        Status: {job.status}
-                    </p>
+                    return (
+                        <div
+                            className={`job-card ${statusClass}`}
+                            key={job.id}
+                        >
+                            <span className={`status-badge ${statusClass}`}>
+                                {job.status}
+                            </span>
 
-                    <button onClick={() => onUpdate(job.id, "Applied")}>
-                        Applied
-                    </button>
+                            <h3>{job.company}</h3>
 
-                    <button onClick={() => onUpdate(job.id, "Interview")}>
-                        Interview
-                    </button>
+                            <p className="job-role">
+                                Cargo: {job.role}
+                            </p>
 
-                    <button onClick={() => onUpdate(job.id, "Offer")}>
-                        Offer
-                    </button>
+                            <p className="job-meta">
+                                Data: {formatDate(job.application_date)}
+                            </p>
 
-                    <button onClick={() => onUpdate(job.id, "Rejected")}>
-                        Rejected
-                    </button>
+                            <div className="job-actions">
+                                <label>
+                                    Status
+                                    <select
+                                        value={job.status}
+                                        onChange={(e) =>
+                                            onUpdate(job.id, e.target.value)
+                                        }
+                                    >
+                                        {STATUS_OPTIONS.map((status) => (
+                                            <option
+                                                key={status}
+                                                value={status}
+                                            >
+                                                {status}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </label>
 
-                    <button onClick={() => onDelete(job.id)}>
-                        Excluir
-                    </button>
-                    <hr />
-                </div>
-            ))}
-        </div>
+                                <button
+                                    className="delete-btn"
+                                    onClick={() => {
+                                        const confirmDelete = window.confirm(
+                                            "Tem certeza que deseja excluir esta candidatura?"
+                                        );
+
+                                        if (confirmDelete) {
+                                            onDelete(job.id);
+                                        }
+                                    }}
+                                >
+                                    Excluir
+                                </button>
+                            </div>
+                        </div>
+                    );
+                })}
+            </div>
+        </section>
     );
 }
 

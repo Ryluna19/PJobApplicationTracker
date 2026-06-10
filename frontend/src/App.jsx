@@ -16,8 +16,15 @@ import {
            MAIN APPLICATION COMPONENT
 ===================================================== */
 
+const STATUS_OPTIONS = [
+  "Applied",
+  "Interview",
+  "Offer",
+  "Rejected"
+];
+
 function App() {
-  //States
+  // States
   const [jobs, setJobs] = useState([]);
   const [isLoggedIn, setIsLoggedIn] = useState(
     !!localStorage.getItem("token")
@@ -25,7 +32,8 @@ function App() {
   const [message, setMessage] = useState("");
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
-  // Carrega sessão Salva
+
+  // Carrega sessão salva
   useEffect(() => {
     const token = localStorage.getItem("token");
 
@@ -47,25 +55,51 @@ function App() {
 
     loadJobs();
   }, []);
+
+  // Exibe mensagens temporárias para ações do usuário
+  function showMessage(text) {
+    setMessage(text);
+
+    setTimeout(() => {
+      setMessage("");
+    }, 3000);
+  }
+
   // Autenticação
   async function handleLogin(email, password) {
-    const data = await loginUser(email, password);
+    try {
+      const data = await loginUser(email, password);
 
-    if (data.token) {
-      localStorage.setItem("token", data.token);
+      if (data.token) {
+        localStorage.setItem("token", data.token);
 
-      setIsLoggedIn(true);
+        setIsLoggedIn(true);
 
-      const jobsData = await getJobs(data.token);
+        const jobsData = await getJobs(data.token);
 
-      setJobs(jobsData);
+        setJobs(jobsData);
 
-      alert("Login realizado com sucesso!");
-    } else {
-      alert("Email ou senha inválidos");
+        showMessage("Login realizado com sucesso!");
+      } else {
+        alert("Email ou senha inválidos");
+      }
+    } catch (error) {
+      console.error(error);
+      alert("Erro ao realizar login.");
     }
   }
-  //CRUD do Jobs
+
+  // Logout
+  function handleLogout() {
+    localStorage.removeItem("token");
+
+    setJobs([]);
+    setIsLoggedIn(false);
+    setSearch("");
+    setStatusFilter("All");
+  }
+
+  // Busca os jobs do usuário autenticado
   async function handleGetJobs() {
     const token = localStorage.getItem("token");
 
@@ -74,15 +108,10 @@ function App() {
     setJobs(data);
   }
 
+  // CRUD dos jobs
   async function handleCreateJob(company, role, status, applicationDate) {
     const token = localStorage.getItem("token");
 
-    console.log({
-      company,
-      role,
-      status,
-      applicationDate
-    });
     await createJob(
       token,
       company,
@@ -91,10 +120,7 @@ function App() {
       applicationDate
     );
 
-    setMessage("Job criado com sucesso!");
-    setTimeout(() => {
-      setMessage("");
-    }, 3000);
+    showMessage("Candidatura criada com sucesso!");
 
     handleGetJobs();
   }
@@ -104,10 +130,7 @@ function App() {
 
     await deleteJob(token, id);
 
-    setMessage("Job deletado com sucesso!");
-    setTimeout(() => {
-      setMessage("");
-    }, 3000);
+    showMessage("Candidatura deletada com sucesso!");
 
     handleGetJobs();
   }
@@ -121,10 +144,7 @@ function App() {
       status
     );
 
-    setMessage(`Status alterado para ${status}`);
-    setTimeout(() => {
-      setMessage("");
-    }, 3000);
+    showMessage(`Status alterado para ${status}`);
 
     handleGetJobs();
   }
@@ -148,23 +168,45 @@ function App() {
     (job) => job.status === "Rejected"
   ).length;
 
-  const filteredJobs = jobs.filter((job) => {
+  // Taxa simples de candidaturas que chegaram em entrevista ou oferta
+  const interviewRate =
+    totalJobs > 0
+      ? Math.round(((interviewJobs + offerJobs) / totalJobs) * 100)
+      : 0;
 
-    const matchesCompany =
-      job.company.toLowerCase().includes(
-        search.toLowerCase()
-      );
+  // Filtros de busca por empresa/cargo e status
+  const filteredJobs = jobs.filter((job) => {
+    const searchTerm = search.toLowerCase();
+
+    const matchesSearch =
+      job.company.toLowerCase().includes(searchTerm) ||
+      job.role.toLowerCase().includes(searchTerm);
 
     const matchesStatus =
       statusFilter === "All" ||
       job.status === statusFilter;
 
-    return matchesCompany && matchesStatus;
+    return matchesSearch && matchesStatus;
   });
+
   return (
     <div className="app-container">
       <div className="header">
-        <h1 className="title-login">Job Tracker</h1>
+        <div>
+          <span className="eyebrow">
+            Job application dashboard
+          </span>
+
+          <h1 className="title-login">
+            Job Tracker
+          </h1>
+
+          {isLoggedIn && (
+            <p className="subtitle">
+              Manage your applications, track progress and update your hiring pipeline.
+            </p>
+          )}
+        </div>
 
         {isLoggedIn && (
           <button
@@ -175,6 +217,7 @@ function App() {
           </button>
         )}
       </div>
+
       {message && (
         <div className="success-message">
           {message}
@@ -185,60 +228,89 @@ function App() {
         <LoginForm onLogin={handleLogin} />
       ) : (
         <>
-
-          <JobForm onCreate={handleCreateJob} />
-          <input
-            type="text"
-            placeholder="Buscar empresa..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="search-input"
-          />
-          <select
-            className="filter-select"
-            value={statusFilter}
-            onChange={(e) =>
-              setStatusFilter(e.target.value)
-            }
-          >
-            <option value="All">Todos</option>
-            <option value="Applied">Applied</option>
-            <option value="Interview">Interview</option>
-            <option value="Offer">Offer</option>
-            <option value="Rejected">Rejected</option>
-          </select>
-
+          {/* Dashboard com estatísticas e filtros rápidos */}
           <div className="stats-container">
+            <button
+              className={`stat-card total ${statusFilter === "All" ? "active" : ""}`}
+              onClick={() => setStatusFilter("All")}
+            >
+              <span className="stat-label">Total</span>
+              <span className="stat-value">{totalJobs}</span>
+            </button>
 
-            <div className="stat-card">
-              <h3>{totalJobs}</h3>
-              <p>Total</p>
+            <button
+              className={`stat-card applied ${statusFilter === "Applied" ? "active" : ""}`}
+              onClick={() => setStatusFilter("Applied")}
+            >
+              <span className="stat-label">Applied</span>
+              <span className="stat-value">{appliedJobs}</span>
+            </button>
+
+            <button
+              className={`stat-card interview ${statusFilter === "Interview" ? "active" : ""}`}
+              onClick={() => setStatusFilter("Interview")}
+            >
+              <span className="stat-label">Interview</span>
+              <span className="stat-value">{interviewJobs}</span>
+            </button>
+
+            <button
+              className={`stat-card offer ${statusFilter === "Offer" ? "active" : ""}`}
+              onClick={() => setStatusFilter("Offer")}
+            >
+              <span className="stat-label">Offer</span>
+              <span className="stat-value">{offerJobs}</span>
+            </button>
+
+            <button
+              className={`stat-card rejected ${statusFilter === "Rejected" ? "active" : ""}`}
+              onClick={() => setStatusFilter("Rejected")}
+            >
+              <span className="stat-label">Rejected</span>
+              <span className="stat-value">{rejectedJobs}</span>
+            </button>
+
+            <div className="stat-card rate">
+              <span className="stat-label">Interview Rate</span>
+              <span className="stat-value">{interviewRate}%</span>
             </div>
-
-            <div className="stat-card">
-              <h3>{appliedJobs}</h3>
-              <p>Applied</p>
-            </div>
-
-            <div className="stat-card">
-              <h3>{interviewJobs}</h3>
-              <p>Interview</p>
-            </div>
-
-            <div className="stat-card">
-              <h3>{offerJobs}</h3>
-              <p>Offer</p>
-            </div>
-
-            <div className="stat-card">
-              <h3>{rejectedJobs}</h3>
-              <p>Rejected</p>
-            </div>
-
           </div>
 
-          <hr />
+          {/* Formulário de criação de candidatura */}
+          <JobForm onCreate={handleCreateJob} />
 
+          {/* Barra de busca e filtro */}
+          <div className="toolbar">
+            <input
+              type="text"
+              placeholder="Buscar por empresa ou cargo..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="search-input"
+            />
+
+            <select
+              className="filter-select"
+              value={statusFilter}
+              onChange={(e) =>
+                setStatusFilter(e.target.value)
+              }
+            >
+              <option value="All">All statuses</option>
+
+              {STATUS_OPTIONS.map((status) => (
+                <option key={status} value={status}>
+                  {status}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <p className="results-count">
+            Exibindo {filteredJobs.length} de {totalJobs} candidaturas
+          </p>
+
+          {/* Lista filtrada de candidaturas */}
           <JobList
             jobs={filteredJobs}
             onDelete={handleDeleteJob}
@@ -248,14 +320,6 @@ function App() {
       )}
     </div>
   );
-
-  function handleLogout() {
-    localStorage.removeItem("token");
-
-    setJobs([]);
-
-    setIsLoggedIn(false);
-  }
 }
 
 export default App;
