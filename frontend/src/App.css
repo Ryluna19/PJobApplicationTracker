@@ -17,11 +17,14 @@ body {
   padding: 24px;
 }
 
+/* Header */
+
 .header {
   position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
+  min-height: 150px;
   margin-bottom: 30px;
   text-align: center;
 }
@@ -31,8 +34,8 @@ body {
 }
 
 .eyebrow {
-  display: inline-block;
-  margin-bottom: 8px;
+  display: block;
+  margin-bottom: 10px;
   color: #ff7a00;
   font-size: 0.85rem;
   font-weight: bold;
@@ -49,7 +52,7 @@ body {
 }
 
 .subtitle {
-  margin-top: 12px;
+  margin: 12px 0 0;
   color: #cccccc;
   font-size: 1rem;
   text-align: center;
@@ -60,21 +63,9 @@ body {
   top: 0;
   right: 0;
   width: auto;
-  padding: 8px 50px;
+  padding: 10px 45px;
   font-weight: bold;
 }
-
-.eyebrow {
-  display: inline-block;
-  margin-bottom: 8px;
-  color: #ff7a00;
-  font-size: 0.85rem;
-  font-weight: bold;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-}
-
-
 
 /* Inputs e botões */
 
@@ -99,6 +90,7 @@ button {
   border-radius: 6px;
   cursor: pointer;
   transition: 0.2s ease;
+  font-family: inherit;
 }
 
 button:hover {
@@ -127,7 +119,7 @@ button:disabled {
 .login-wrapper {
   display: flex;
   justify-content: center;
-  margin-top: 70px;
+  margin-top: 50px;
 }
 
 .login-container {
@@ -157,14 +149,6 @@ button:disabled {
   font-weight: bold;
 }
 
-/* Header */
-
-.logout-btn {
-  width: auto;
-  padding: 8px 50px;
-  font-weight: bold;
-}
-
 /* Dashboard */
 
 .stats-container {
@@ -176,15 +160,22 @@ button:disabled {
 }
 
 .stat-card {
+  min-width: 130px;
+  min-height: 95px;
+  padding: 15px;
   background: #1e1e1e;
   border-top: 4px solid #ff7a00;
   border-radius: 10px;
-  transition: 0.2s ease;
-  min-width: 130px;
-  padding: 15px;
+  color: white;
   text-align: center;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-  color: white;
+  transition: 0.2s ease;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
 }
 
 .stat-card:hover {
@@ -205,18 +196,22 @@ button:disabled {
   transform: none;
 }
 
-.stat-label {
+.stat-label,
+.stat-card p {
   display: block;
-  margin-bottom: 8px;
+  margin: 0;
   color: #cccccc;
   font-size: 0.95rem;
   font-weight: bold;
 }
 
-.stat-value {
+.stat-value,
+.stat-card h3 {
+  display: block;
+  margin: 0;
+  color: #ff7a00;
   font-size: 2rem;
   font-weight: bold;
-  color: #ff7a00;
 }
 
 /* Formulário */
@@ -256,7 +251,13 @@ button:disabled {
   padding: 10px;
 }
 
-.primary-btn {
+.job-form > input,
+.job-form > select {
+  margin-bottom: 10px;
+}
+
+.primary-btn,
+.job-form button {
   width: 100%;
   padding: 12px;
   margin-top: 14px;
@@ -296,7 +297,7 @@ button:disabled {
 }
 
 .section-header h2 {
-  margin-bottom: 8px;
+  margin: 0 0 8px;
   color: #ffffff;
 }
 
@@ -457,8 +458,15 @@ button:disabled {
   }
 
   .header {
-    flex-direction: column;
-    align-items: flex-start;
+    min-height: auto;
+    padding-top: 60px;
+  }
+
+  .logout-btn {
+    top: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
   }
 
   .title-login {
@@ -475,9 +483,5 @@ button:disabled {
 
   .job-actions {
     grid-template-columns: 1fr;
-  }
-
-  .logout-btn {
-    width: 100%;
   }
 }
