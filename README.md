@@ -11,10 +11,6 @@ Built as a **portfolio project** to demonstrate practical full-stack development
 <img width="1146" height="959" alt="Animação" src="https://github.com/user-attachments/assets/49d24103-cbca-46ec-ad00-bc068e6ae3dc" />
 
 
-📌 Recommended: 10–20 seconds showing full flow (login → dashboard → create job → update status)
-
----
-
 ## ⚡ 10-Second Overview
 
 - Full-stack app (React + Node.js + PostgreSQL)
