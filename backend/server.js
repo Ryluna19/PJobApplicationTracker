@@ -105,58 +105,103 @@ app.delete("/jobs/:id", auth, async (req, res) => {
 });
 
 app.post("/register", async (req, res) => {
+    const { name, email, password } = req.body;
+
+    if (!name || !email || !password) {
+        return res.status(400).json({
+            error: "Preencha nome, email e senha."
+        });
+    }
+
+    if (password.length < 6) {
+        return res.status(400).json({
+            error: "A senha precisa ter pelo menos 6 caracteres."
+        });
+    }
+
     try {
-        const { name, email, password } = req.body;
+        const userExists = await pool.query(
+            "SELECT * FROM users WHERE email = $1",
+            [email]
+        );
+
+        if (userExists.rows.length > 0) {
+            return res.status(409).json({
+                error: "Este email já está cadastrado."
+            });
+        }
 
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        const result = await pool.query(
-            "INSERT INTO users (name, email, password) VALUES ($1, $2, $3) RETURNING id, name, email",
+        await pool.query(
+            "INSERT INTO users (name, email, password) VALUES ($1, $2, $3)",
             [name, email, hashedPassword]
         );
 
-        res.json(result.rows[0]);
-    } catch (err) {
-        console.error(err);
-        res.status(500).send("Erro ao registrar usuário");
+        return res.status(201).json({
+            message: "Conta criada com sucesso."
+        });
+    } catch (error) {
+        console.error(error);
+
+        return res.status(500).json({
+            error: "Erro interno ao criar conta."
+        });
     }
 });
 
 app.post("/login", async (req, res) => {
-    try {
-        const { email, password } = req.body;
+    const { email, password } = req.body;
 
+    if (!email || !password) {
+        return res.status(400).json({
+            error: "Preencha email e senha."
+        });
+    }
+
+    try {
         const result = await pool.query(
             "SELECT * FROM users WHERE email = $1",
             [email]
         );
 
-        const user = result.rows[0];
-
-        if (!user) {
-            return res.status(400).send("Usuário não encontrado");
+        if (result.rows.length === 0) {
+            return res.status(401).json({
+                error: "Email ou senha inválidos."
+            });
         }
 
-        const validPassword = await bcrypt.compare(password, user.password);
+        const user = result.rows[0];
 
-        if (!validPassword) {
-            return res.status(400).send("Senha incorreta");
+        const passwordMatch = await bcrypt.compare(
+            password,
+            user.password
+        );
+
+        if (!passwordMatch) {
+            return res.status(401).json({
+                error: "Email ou senha inválidos."
+            });
         }
 
         const token = jwt.sign(
             { userId: user.id },
             process.env.JWT_SECRET,
-            { expiresIn: "1d" }
+            { expiresIn: "1h" }
         );
 
-        res.json({ token });
+        return res.json({
+            message: "Login realizado com sucesso.",
+            token
+        });
+    } catch (error) {
+        console.error(error);
 
-    } catch (err) {
-        console.error(err);
-        res.status(500).send("Erro no login");
+        return res.status(500).json({
+            error: "Erro interno ao realizar login."
+        });
     }
 });
-
 
 
 app.listen(3000, () => {
