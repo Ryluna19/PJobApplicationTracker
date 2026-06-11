@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-function RegisterForm({ onRegister, onGoToLogin }) {
+function RegisterForm({ onRegister, onGoToLogin, onRegisterError }) {
     // Estados do formulário
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
@@ -28,6 +28,20 @@ function RegisterForm({ onRegister, onGoToLogin }) {
 
         setIsLoading(true);
 
+        if (!name.trim() || !email.trim() || !password.trim()) {
+            onRegisterError("Preencha nome, email e senha.");
+            return;
+        }
+
+        if (!email.includes("@")) {
+            onRegisterError("Digite um email válido.");
+            return;
+        }
+
+        if (password.length < 6) {
+            onRegisterError("A senha precisa ter pelo menos 6 caracteres.");
+            return;
+        }
         await onRegister(
             name.trim(),
             email.trim().toLowerCase(),

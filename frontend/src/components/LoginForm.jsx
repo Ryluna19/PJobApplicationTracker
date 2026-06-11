@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-function LoginForm({ onLogin, onGoToRegister }) {
+function LoginForm({ onLogin, onGoToRegister, onLoginError }) {
     // Estados do formulário de login
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -9,7 +9,10 @@ function LoginForm({ onLogin, onGoToRegister }) {
     // Login
     async function handleSubmit(e) {
         e.preventDefault();
-
+        if (!email.trim() || !password.trim()) {
+            onLoginError("Preencha email e senha.");
+            return;
+        }
         if (!email.trim() || !password.trim()) {
             alert("Preencha email e senha.");
             return;
