@@ -1,20 +1,18 @@
 import { useState, useEffect } from "react";
 import LoginForm from "./components/LoginForm";
+import RegisterForm from "./components/RegisterForm";
 import JobForm from "./components/JobForm";
 import JobList from "./components/JobList";
 import "./App.css";
 
 import {
   loginUser,
+  registerUser,
   getJobs,
   createJob,
   deleteJob,
   updateJobStatus
 } from "./services/api";
-
-/* =====================================================
-           MAIN APPLICATION COMPONENT
-===================================================== */
 
 const STATUS_OPTIONS = [
   "Applied",
@@ -29,6 +27,7 @@ function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(
     !!localStorage.getItem("token")
   );
+  const [showRegister, setShowRegister] = useState(false);
   const [message, setMessage] = useState("");
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
@@ -56,7 +55,7 @@ function App() {
     loadJobs();
   }, []);
 
-  // Exibe mensagens temporárias para ações do usuário
+  // Mensagens
   function showMessage(text) {
     setMessage(text);
 
@@ -65,7 +64,7 @@ function App() {
     }, 3000);
   }
 
-  // Autenticação
+  // Login
   async function handleLogin(email, password) {
     try {
       const data = await loginUser(email, password);
@@ -81,11 +80,23 @@ function App() {
 
         showMessage("Login realizado com sucesso!");
       } else {
-        alert("Email ou senha inválidos");
+        showMessage("Email ou senha inválidos.");
       }
     } catch (error) {
       console.error(error);
-      alert("Erro ao realizar login.");
+      showMessage("Erro ao realizar login.");
+    }
+  }
+
+  // Cadastro
+  async function handleRegister(name, email, password) {
+    try {
+      await registerUser(name, email, password);
+
+      showMessage("Conta criada com sucesso! Faça login.");
+      setShowRegister(false);
+    } catch (error) {
+      showMessage(error.message);
     }
   }
 
@@ -97,6 +108,7 @@ function App() {
     setIsLoggedIn(false);
     setSearch("");
     setStatusFilter("All");
+    setShowRegister(false);
   }
 
   // Busca os jobs do usuário autenticado
@@ -149,7 +161,7 @@ function App() {
     handleGetJobs();
   }
 
-  // Estatísticas do dashboard
+  // Estatísticas
   const totalJobs = jobs.length;
 
   const appliedJobs = jobs.filter(
@@ -168,13 +180,12 @@ function App() {
     (job) => job.status === "Rejected"
   ).length;
 
-  // Taxa simples de candidaturas que chegaram em entrevista ou oferta
   const interviewRate =
     totalJobs > 0
       ? Math.round(((interviewJobs + offerJobs) / totalJobs) * 100)
       : 0;
 
-  // Filtros de busca por empresa/cargo e status
+  // Filtros
   const filteredJobs = jobs.filter((job) => {
     const searchTerm = search.toLowerCase();
 
@@ -225,10 +236,21 @@ function App() {
       )}
 
       {!isLoggedIn ? (
-        <LoginForm onLogin={handleLogin} />
+        <>
+          {showRegister ? (
+            <RegisterForm
+              onRegister={handleRegister}
+              onGoToLogin={() => setShowRegister(false)}
+            />
+          ) : (
+            <LoginForm
+              onLogin={handleLogin}
+              onGoToRegister={() => setShowRegister(true)}
+            />
+          )}
+        </>
       ) : (
         <>
-          {/* Dashboard com estatísticas e filtros rápidos */}
           <div className="stats-container">
             <button
               className={`stat-card total ${statusFilter === "All" ? "active" : ""}`}
@@ -276,10 +298,8 @@ function App() {
             </div>
           </div>
 
-          {/* Formulário de criação de candidatura */}
           <JobForm onCreate={handleCreateJob} />
 
-          {/* Barra de busca e filtro */}
           <div className="toolbar">
             <input
               type="text"
@@ -292,9 +312,7 @@ function App() {
             <select
               className="filter-select"
               value={statusFilter}
-              onChange={(e) =>
-                setStatusFilter(e.target.value)
-              }
+              onChange={(e) => setStatusFilter(e.target.value)}
             >
               <option value="All">All statuses</option>
 
@@ -310,7 +328,6 @@ function App() {
             Exibindo {filteredJobs.length} de {totalJobs} candidaturas
           </p>
 
-          {/* Lista filtrada de candidaturas */}
           <JobList
             jobs={filteredJobs}
             onDelete={handleDeleteJob}

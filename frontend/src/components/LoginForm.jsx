@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-function LoginForm({ onLogin }) {
+function LoginForm({ onLogin, onGoToRegister }) {
     // Estados do formulário de login
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -43,6 +43,16 @@ function LoginForm({ onLogin }) {
                 <button type="submit" disabled={isLoading}>
                     {isLoading ? "Entrando..." : "Entrar"}
                 </button>
+                <p className="auth-switch">
+                    Ainda não tem conta?{" "}
+                    <button
+                        type="button"
+                        className="link-btn"
+                        onClick={onGoToRegister}
+                    >
+                        Criar conta
+                    </button>
+                </p>
             </form>
         </div>
     );
