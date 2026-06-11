@@ -27,6 +27,16 @@ Built as a **portfolio project** to demonstrate practical full-stack development
 
 ## ✨ Features
 
+- User registration and login flow
+- JWT-based authentication
+- Protected dashboard
+- Create, read, update and delete job applications
+- Search applications by company or role
+- Filter applications by status
+- Dashboard statistics
+- Visual feedback for success and error messages
+- Responsive dark-themed interface
+
 ### 🔐 Authentication
 
 * User login
