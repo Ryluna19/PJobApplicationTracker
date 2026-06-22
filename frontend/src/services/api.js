@@ -26,7 +26,13 @@ export async function getJobs(token) {
         }
     });
 
-    return res.json();
+    const data = await res.json();
+
+    if (!res.ok) {
+        throw new Error(data.error || "Não foi possível carregar as candidaturas.");
+    }
+
+    return data;
 }
 // Criar job
 export async function createJob(token, company, role, status, applicationDate) {
