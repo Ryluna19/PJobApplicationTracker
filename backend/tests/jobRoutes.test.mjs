@@ -1,5 +1,6 @@
 import { createRequire } from "node:module";
 import {
+afterEach,
 beforeEach,
 describe,
 expect,
@@ -8,10 +9,10 @@ vi
 } from "vitest";
 import request from "supertest";
 
-// Permite importar arquivos CommonJS dentro do arquivo de teste em ESM.
+// Permite importar arquivos CommonJS dentro deste arquivo de teste ESM.
 const require = createRequire(import.meta.url);
 
-// Chave exclusiva para gerar e validar tokens durante os testes.
+// Chave usada somente para criar JWTs válidos durante os testes.
 process.env.JWT_SECRET = "job-tracker-test-secret";
 
 const createApp = require("../app");
@@ -24,7 +25,7 @@ query: vi.fn()
 };
 }
 
-// Cria um JWT válido para simular um usuário autenticado.
+// Cria um token para representar um usuário autenticado.
 function createToken(userId = 1) {
 return jwt.sign(
 { userId },
@@ -36,10 +37,19 @@ process.env.JWT_SECRET,
 let app;
 let fakePool;
 
-// Cada teste começa com uma aplicação e banco falso novos.
 beforeEach(() => {
 fakePool = createFakePool();
 app = createApp(fakePool);
+
+
+// Evita que erros simulados de banco poluam o terminal dos testes.
+vi.spyOn(console, "error").mockImplementation(() => {});
+
+
+});
+
+afterEach(() => {
+vi.restoreAllMocks();
 });
 
 describe("GET /jobs", () => {
@@ -49,8 +59,6 @@ const response = await request(app)
 
 
     expect(response.status).toBe(401);
-
-    // Sem autenticação, nenhuma consulta deve chegar ao banco.
     expect(fakePool.query).not.toHaveBeenCalled();
 });
 
@@ -65,7 +73,6 @@ it("returns 401 when the token is malformed", async () => {
         error: "Token mal formatado"
     });
 
-    // A rota deve bloquear a requisição antes de consultar o banco.
     expect(fakePool.query).not.toHaveBeenCalled();
 });
 
@@ -75,7 +82,6 @@ it("returns 401 when the token is invalid", async () => {
         .set("Authorization", "Bearer invalid-token");
 
     expect(response.status).toBe(401);
-
     expect(fakePool.query).not.toHaveBeenCalled();
 });
 
@@ -104,7 +110,7 @@ it("returns only the jobs from the authenticated user", async () => {
     expect(response.status).toBe(200);
     expect(response.body).toEqual(jobs);
 
-    // Confirma que a busca usa o ID vindo do JWT.
+    // A busca deve usar o userId extraído do JWT.
     expect(fakePool.query).toHaveBeenCalledWith(
         "SELECT * FROM jobs WHERE user_id = $1 ORDER BY id ASC",
         [7]
@@ -133,9 +139,97 @@ it("returns 500 when the database query fails", async () => {
 });
 
 describe("POST /jobs", () => {
-it("returns 400 when the job status is invalid", async () => {
-const token = createToken(1);
+it("returns 400 when the company is empty", async () => {
+const token = createToken(7);
 
+
+    const response = await request(app)
+        .post("/jobs")
+        .set("Authorization", `Bearer ${token}`)
+        .send({
+            company: "",
+            role: "Junior Developer",
+            status: "Applied",
+            application_date: "2026-06-22"
+        });
+
+    expect(response.status).toBe(400);
+
+    expect(response.body).toEqual({
+        error: "Empresa é obrigatória."
+    });
+
+    expect(fakePool.query).not.toHaveBeenCalled();
+});
+
+it("returns 400 when the company is longer than 100 characters", async () => {
+    const token = createToken(7);
+
+    const response = await request(app)
+        .post("/jobs")
+        .set("Authorization", `Bearer ${token}`)
+        .send({
+            company: "A".repeat(101),
+            role: "Junior Developer",
+            status: "Applied",
+            application_date: "2026-06-22"
+        });
+
+    expect(response.status).toBe(400);
+
+    expect(response.body).toEqual({
+        error: "Empresa deve ter no máximo 100 caracteres."
+    });
+
+    expect(fakePool.query).not.toHaveBeenCalled();
+});
+
+it("returns 400 when the role is empty", async () => {
+    const token = createToken(7);
+
+    const response = await request(app)
+        .post("/jobs")
+        .set("Authorization", `Bearer ${token}`)
+        .send({
+            company: "OpenAI",
+            role: "",
+            status: "Applied",
+            application_date: "2026-06-22"
+        });
+
+    expect(response.status).toBe(400);
+
+    expect(response.body).toEqual({
+        error: "Cargo é obrigatório."
+    });
+
+    expect(fakePool.query).not.toHaveBeenCalled();
+});
+
+it("returns 400 when the role is longer than 100 characters", async () => {
+    const token = createToken(7);
+
+    const response = await request(app)
+        .post("/jobs")
+        .set("Authorization", `Bearer ${token}`)
+        .send({
+            company: "OpenAI",
+            role: "A".repeat(101),
+            status: "Applied",
+            application_date: "2026-06-22"
+        });
+
+    expect(response.status).toBe(400);
+
+    expect(response.body).toEqual({
+        error: "Cargo deve ter no máximo 100 caracteres."
+    });
+
+    expect(fakePool.query).not.toHaveBeenCalled();
+});
+
+it("returns 400 when the job status is invalid", async () => {
+    const token = createToken(7);
 
     const response = await request(app)
         .post("/jobs")
@@ -151,6 +245,50 @@ const token = createToken(1);
 
     expect(response.body).toEqual({
         error: "Status da candidatura inválido."
+    });
+
+    expect(fakePool.query).not.toHaveBeenCalled();
+});
+
+it("returns 400 when the application date has an invalid format", async () => {
+    const token = createToken(7);
+
+    const response = await request(app)
+        .post("/jobs")
+        .set("Authorization", `Bearer ${token}`)
+        .send({
+            company: "OpenAI",
+            role: "Junior Developer",
+            status: "Applied",
+            application_date: "22-06-2026"
+        });
+
+    expect(response.status).toBe(400);
+
+    expect(response.body).toEqual({
+        error: "Informe uma data de candidatura válida."
+    });
+
+    expect(fakePool.query).not.toHaveBeenCalled();
+});
+
+it("returns 400 when the application date does not exist", async () => {
+    const token = createToken(7);
+
+    const response = await request(app)
+        .post("/jobs")
+        .set("Authorization", `Bearer ${token}`)
+        .send({
+            company: "OpenAI",
+            role: "Junior Developer",
+            status: "Applied",
+            application_date: "2026-02-30"
+        });
+
+    expect(response.status).toBe(400);
+
+    expect(response.body).toEqual({
+        error: "Informe uma data de candidatura válida."
     });
 
     expect(fakePool.query).not.toHaveBeenCalled();
@@ -195,6 +333,30 @@ it("creates a job for the authenticated user", async () => {
             7
         ]
     );
+});
+
+it("returns 500 when the database fails while creating a job", async () => {
+    const token = createToken(7);
+
+    fakePool.query.mockRejectedValueOnce(
+        new Error("Database connection failed")
+    );
+
+    const response = await request(app)
+        .post("/jobs")
+        .set("Authorization", `Bearer ${token}`)
+        .send({
+            company: "OpenAI",
+            role: "Junior Developer",
+            status: "Applied",
+            application_date: "2026-06-22"
+        });
+
+    expect(response.status).toBe(500);
+
+    expect(response.body).toEqual({
+        error: "Erro ao criar candidatura."
+    });
 });
 
 
@@ -260,7 +422,7 @@ it("returns 404 when the job is not available to the authenticated user", async 
         error: "Candidatura não encontrada."
     });
 
-    // A atualização precisa usar o ID da vaga e o dono autenticado.
+    // A atualização deve filtrar pelo ID da vaga e pelo usuário autenticado.
     expect(fakePool.query).toHaveBeenCalledWith(
         expect.stringContaining("UPDATE jobs"),
         ["Interview", 10, 7]
@@ -297,6 +459,27 @@ it("updates the job status for the authenticated user", async () => {
         expect.stringContaining("UPDATE jobs"),
         ["Interview", 10, 7]
     );
+});
+
+it("returns 500 when the database fails while updating a job", async () => {
+    const token = createToken(7);
+
+    fakePool.query.mockRejectedValueOnce(
+        new Error("Database connection failed")
+    );
+
+    const response = await request(app)
+        .put("/jobs/10")
+        .set("Authorization", `Bearer ${token}`)
+        .send({
+            status: "Interview"
+        });
+
+    expect(response.status).toBe(500);
+
+    expect(response.body).toEqual({
+        error: "Erro ao atualizar candidatura."
+    });
 });
 
 
@@ -353,6 +536,24 @@ it("deletes a job that belongs to the authenticated user", async () => {
         expect.stringContaining("DELETE FROM jobs"),
         [10, 7]
     );
+});
+
+it("returns 500 when the database fails while deleting a job", async () => {
+    const token = createToken(7);
+
+    fakePool.query.mockRejectedValueOnce(
+        new Error("Database connection failed")
+    );
+
+    const response = await request(app)
+        .delete("/jobs/10")
+        .set("Authorization", `Bearer ${token}`);
+
+    expect(response.status).toBe(500);
+
+    expect(response.body).toEqual({
+        error: "Erro ao excluir candidatura."
+    });
 });
 
 
