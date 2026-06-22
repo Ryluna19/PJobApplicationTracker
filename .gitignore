@@ -7,6 +7,7 @@
 # Builds
 **/dist/
 **/build/
+backend/coverage/
 
 # Logs
 *.log
