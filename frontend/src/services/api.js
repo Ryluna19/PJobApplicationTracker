@@ -1,42 +1,55 @@
-// Configuração da API
 const API_URL = "http://localhost:3000";
 
-// Login
-export async function loginUser(email, password) {
-    const res = await fetch(`${API_URL}/login`, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-            email,
-            password
-        })
-    });
+async function request(endpoint, options = {}) {
+    const response = await fetch(`${API_URL}${endpoint}`, options);
 
-    const data = await res.json();
+    const contentType = response.headers.get("content-type") || "";
+    const data = contentType.includes("application/json")
+        ? await response.json()
+        : await response.text();
 
-    return data;
-}
-// Buscar jobs
-export async function getJobs(token) {
-    const res = await fetch(`${API_URL}/jobs`, {
-        headers: {
-            Authorization: `Bearer ${token}`
-        }
-    });
+    if (!response.ok) {
+        const message =
+            typeof data === "object" && data !== null
+                ? data.error || data.message
+                : data;
 
-    const data = await res.json();
-
-    if (!res.ok) {
-        throw new Error(data.error || "Não foi possível carregar as candidaturas.");
+        throw new Error(message || "Não foi possível concluir a operação.");
     }
 
     return data;
 }
-// Criar job
-export async function createJob(token, company, role, status, applicationDate) {
-    const res = await fetch(`${API_URL}/jobs`, {
+
+export function loginUser(email, password) {
+    return request("/login", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ email, password })
+    });
+}
+
+export function registerUser(name, email, password) {
+    return request("/register", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ name, email, password })
+    });
+}
+
+export function getJobs(token) {
+    return request("/jobs", {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+}
+
+export function createJob(token, company, role, status, applicationDate) {
+    return request("/jobs", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -49,22 +62,10 @@ export async function createJob(token, company, role, status, applicationDate) {
             application_date: applicationDate
         })
     });
-
-    return res.json();
 }
 
-export async function deleteJob(token, id) {
-    const res = await fetch(`${API_URL}/jobs/${id}`, {
-        method: "DELETE",
-        headers: {
-            Authorization: `Bearer ${token}`
-        }
-    });
-
-    return res.text();
-}
-export async function updateJobStatus(token, id, status) {
-    const res = await fetch(`${API_URL}/jobs/${id}`, {
+export function updateJobStatus(token, id, status) {
+    return request(`/jobs/${id}`, {
         method: "PUT",
         headers: {
             "Content-Type": "application/json",
@@ -72,28 +73,13 @@ export async function updateJobStatus(token, id, status) {
         },
         body: JSON.stringify({ status })
     });
-
-    return res.json();
 }
 
-export async function registerUser(name, email, password) {
-    const response = await fetch("http://localhost:3000/register", {
-        method: "POST",
+export function deleteJob(token, id) {
+    return request(`/jobs/${id}`, {
+        method: "DELETE",
         headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-            name,
-            email,
-            password
-        })
+            Authorization: `Bearer ${token}`
+        }
     });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-        throw new Error(data.error || data.message || "Erro ao criar conta.");
-    }
-
-    return data;
 }
