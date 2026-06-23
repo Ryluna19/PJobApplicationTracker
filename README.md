@@ -4,6 +4,8 @@ A full-stack web application that helps users organize and track job application
 
 Built as a portfolio project to demonstrate practical full-stack development skills with React, Node.js, Express, PostgreSQL, JWT authentication, backend validation, automated testing, and REST APIs.
 
+[![Backend Tests](https://github.com/Ryluna19/PJobApplicationTracker/actions/workflows/backend-tests.yml/badge.svg)](https://github.com/Ryluna19/PJobApplicationTracker/actions/workflows/backend-tests.yml)
+
 ---
 
 ## 🎬 Demo
