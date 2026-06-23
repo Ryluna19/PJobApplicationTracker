@@ -509,7 +509,6 @@ This project was built to demonstrate core skills required for entry-level full-
 * Dashboard charts
 * Password recovery flow
 * Rate limiting for authentication routes
-* GitHub Actions workflow for automated test execution
 * Environment-specific frontend API configuration
 * Deployment with managed database hosting
 
@@ -530,4 +529,4 @@ This project was built to demonstrate core skills required for entry-level full-
 
 This is a portfolio project built for learning and demonstration purposes.
 
-For production use, improvements such as e-mail verification, password recovery, rate limiting, role-based permissions, environment-specific configuration, monitoring, deployment infrastructure, and CI pipelines would be recommended.
+For production use, improvements such as e-mail verification, password recovery, rate limiting, role-based permissions, environment-specific configuration, monitoring and deployment infrastructure.
